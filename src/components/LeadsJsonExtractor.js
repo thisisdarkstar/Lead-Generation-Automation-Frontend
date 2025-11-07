@@ -1,4 +1,3 @@
-import { downloadAsTxt } from "@/utils/fileSaver";
 import extractFromLeads from "@/utils/jsonUtils";
 import React, { useEffect, useState, useRef } from "react";
 

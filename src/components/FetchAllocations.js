@@ -37,7 +37,7 @@ export default function FetchAllocations() {
     }, [domains]);
 
     const fetchDomains = async () => {
-        const baseUrl = process.env.API_BASE_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         setLoading(true);
         setError("");
         setDomains([]);
