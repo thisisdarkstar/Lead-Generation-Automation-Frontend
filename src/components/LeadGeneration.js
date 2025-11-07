@@ -1,7 +1,9 @@
 import { downloadAsJson } from "@/utils/fileSaver";
 import React, { useRef, useState, useEffect } from "react";
 
-const API_BASE = "http://localhost:8000/api/find-leads";
+
+const baseUrl = process.env.API_BASE_URL;
+const API_BASE = `${baseUrl}/api/find-leads`;
 const DOMAIN_HANDOFF_KEY = "leadGenHandoffDomains";
 
 export default function LeadGenerator() {

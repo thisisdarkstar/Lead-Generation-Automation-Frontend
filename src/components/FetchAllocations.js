@@ -37,11 +37,12 @@ export default function FetchAllocations() {
     }, [domains]);
 
     const fetchDomains = async () => {
+        const baseUrl = process.env.API_BASE_URL;
         setLoading(true);
         setError("");
         setDomains([]);
         try {
-            const res = await fetch("http://localhost:8000/api/extract-namekart", {
+            const res = await fetch(`${baseUrl}/api/extract-namekart`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token, size }),
