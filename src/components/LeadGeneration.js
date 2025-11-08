@@ -76,7 +76,9 @@ export default function LeadGenerator() {
     };
 
     const handleFileGen = async () => {
-        setResult(null); setError(""); setLoading(true);
+        setResult(null);
+        setError("");
+        setLoading(true);
         try {
             if (!file) throw new Error("Please select a .txt file of domains.");
             const formData = new FormData();
@@ -84,10 +86,17 @@ export default function LeadGenerator() {
             formData.append("debug", "false");
             const res = await fetch(API_BASE, { method: "POST", body: formData });
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
-            setResult(await res.json());
-        } catch (e) { setError(e.message || String(e)); }
+
+            const jsonResponse = await res.json();
+            const leads = jsonResponse.leads;
+
+            setResult(leads);
+        } catch (e) {
+            setError(e.message || String(e));
+        }
         setLoading(false);
     };
+
 
     const handleFileSelect = (e) => {
         if (e.target.files[0]) {
@@ -105,7 +114,7 @@ export default function LeadGenerator() {
 
     const handleDownloadJSON = () => {
         if (!result) return;
-        downloadAsJson(result.leads, "leads_results.json");
+        downloadAsJson(result, "leads_results.json");
     };
 
     const handleClearResult = () => setResult(null);
