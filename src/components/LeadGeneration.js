@@ -70,7 +70,9 @@ export default function LeadGenerator() {
                 method: "POST", body: formData
             });
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
-            setResult(await res.json());
+            const jsonResponse = await res.json();
+            const leads = jsonResponse.leads;
+            setResult(leads);
         } catch (e) { setError(e.message || String(e)); }
         setLoading(false);
     };
@@ -89,7 +91,6 @@ export default function LeadGenerator() {
 
             const jsonResponse = await res.json();
             const leads = jsonResponse.leads;
-
             setResult(leads);
         } catch (e) {
             setError(e.message || String(e));
