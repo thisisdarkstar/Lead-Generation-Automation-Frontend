@@ -195,7 +195,7 @@ export default function LeadsJsonExtractor() {
                         <span className="ml-2 text-gray-400 text-sm">{filenameJSON ? filenameJSON : "leads.json"}</span>
                         {filenameJSON && (
                             <button onClick={handleClearJSON}
-                                className="px-2 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-xs">Clear JSON</button>
+                                className="px-2 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-xs cursor-pointer">Clear JSON</button>
                         )}
                     </div>
                 </div>
@@ -214,7 +214,7 @@ export default function LeadsJsonExtractor() {
                         <span className="ml-2 text-gray-400 text-sm">{filenameTXT ? filenameTXT : "domains.txt"}</span>
                         {filenameTXT && (
                             <button onClick={handleClearTXT}
-                                className="px-2 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-xs">Clear TXT</button>
+                                className="px-2 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-xs cursor-pointer ">Clear TXT</button>
                         )}
                     </div>
                 </div>
@@ -226,7 +226,7 @@ export default function LeadsJsonExtractor() {
                 <div className="flex-1" />
                 <button
                     onClick={handleClearAll}
-                    className="px-4 py-2 rounded bg-red-800 hover:bg-red-700 text-white transition-colors self-start">Clear All</button>
+                    className="px-4 py-2 rounded bg-red-800 hover:bg-red-700 text-white transition-colors self-start cursor-pointer">Clear All</button>
             </div>
 
             <div className="mb-6">
@@ -237,7 +237,7 @@ export default function LeadsJsonExtractor() {
                 />
                 <button
                     onClick={handlePasteBoxClear}
-                    className="px-3 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-sm">Clear PasteBox</button>
+                    className="px-3 py-1 rounded bg-red-700 hover:bg-red-800 text-white text-sm cursor-pointer">Clear PasteBox</button>
             </div>
 
             {result && (

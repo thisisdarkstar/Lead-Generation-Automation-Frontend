@@ -5,7 +5,8 @@ import LeadsJsonExtractor from "@/components/LeadsJsonExtractor";
 import HtmlDomainExtractor from "@/components/HtmlDomainExtractor";
 import LeadGenerator from "@/components/LeadGeneration";
 import FetchAllocations from "@/components/FetchAllocations";
-import HealthCheck from "@/components/HealthCheck"; // <- Import your component
+import HealthCheck from "@/components/HealthCheck";
+import CheckFiles from "@/components/CheckFIles"; // Import your floating component
 
 const TABS = [
   { id: "csv", label: "CSV to Domains" },
@@ -22,18 +23,17 @@ export default function Home() {
 
   return (
     <>
-      <main className="m-auto p-6">
+      <main className="mx-auto p-6">
         <nav className="mb-4 flex gap-4 items-center justify-center">
           {TABS.map(t => (
             <button
               key={t.id}
-              style={{
-                fontWeight: tab === t.id ? "bold" : "normal",
-                borderBottom: tab === t.id ? "2px solid #1976d2" : "none",
-                background: "none",
-                padding: "8px 12px",
-                cursor: "pointer"
-              }}
+              className={`
+                px-3 py-2 rounded transition-colors cursor-pointer
+                ${tab === t.id
+                  ? "border-b-2 border-blue-700 font-bold text-blue-100 bg-blue-900/70"
+                  : "bg-gray-700 text-gray-100 opacity-85 hover:bg-gray-600"}
+              `}
               onClick={() => setTab(t.id)}
             >
               {t.label}
@@ -41,19 +41,19 @@ export default function Home() {
           ))}
         </nav>
         <section>
-          <div style={{ display: tab === "csv" ? "block" : "none" }}>
+          <div className={tab === "csv" ? "" : "hidden"}>
             <DomainUploader onExtracted={d => setDomains(d)} />
           </div>
-          <div style={{ display: tab === "leads" ? "block" : "none" }}>
+          <div className={tab === "leads" ? "" : "hidden"}>
             <LeadsJsonExtractor initialDomains={domains} />
           </div>
-          <div style={{ display: tab === "html" ? "block" : "none" }}>
+          <div className={tab === "html" ? "" : "hidden"}>
             <HtmlDomainExtractor onExtracted={d => setDomains(d)} />
           </div>
-          <div style={{ display: tab === "lead_gen" ? "block" : "none" }}>
+          <div className={tab === "lead_gen" ? "" : "hidden"}>
             <LeadGenerator />
           </div>
-          <div style={{ display: tab === "fetch_alloc" ? "block" : "none" }}>
+          <div className={tab === "fetch_alloc" ? "" : "hidden"}>
             <FetchAllocations />
           </div>
         </section>
@@ -62,54 +62,34 @@ export default function Home() {
       {/* Floating HealthCheck button */}
       <button
         onClick={() => setShowHealth(true)}
-        style={{
-          position: "fixed",
-          bottom: 32,
-          right: 32,
-          zIndex: 50,
-          background: "#1976d2",
-          color: "#fff",
-          padding: "14px 24px",
-          borderRadius: "50px",
-          boxShadow: "0 3px 18px rgba(30,60,150,0.3)",
-          fontWeight: "bold",
-          fontSize: "18px",
-          border: "none",
-          cursor: "pointer"
-        }}
+        className="fixed bottom-32 right-7 z-50 bg-blue-700 hover:bg-blue-800 text-white py-3 px-6 rounded-full font-bold text-lg shadow-xl cursor-pointer"
       >
         Check Health
       </button>
 
-      {/* HealthCheck modal/dialog */}
+      {/* HealthCheck modal/dialog (Tailwind) */}
       {showHealth && (
         <div
-          style={{
-            position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", zIndex: 100,
-            background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center"
-          }}
+          className="fixed inset-0 z-100 bg-black/50 flex items-center justify-center"
           onClick={() => setShowHealth(false)}
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{
-              background: "#181f2a", borderRadius: "16px", boxShadow: "0 6px 32px rgba(20,40,80,0.6)",
-              padding: "32px", maxWidth: 480, width: "90vw"
-            }}
+            className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-[90vw]"
           >
             <HealthCheck />
             <button
               onClick={() => setShowHealth(false)}
-              style={{
-                display: "block", margin: "24px auto 0 auto", background: "#1976d2", color: "#fff", padding: "8px 20px",
-                borderRadius: "8px", border: "none", fontWeight: "bold", cursor: "pointer"
-              }}
+              className="block mx-auto mt-8 bg-blue-700 hover:bg-blue-800 text-white px-8 py-2 rounded-lg font-bold shadow-sm"
             >
               Close
             </button>
           </div>
         </div>
       )}
+
+      {/* Floating CheckFiles utility */}
+      <CheckFiles />
     </>
   );
 }

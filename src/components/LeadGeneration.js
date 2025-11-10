@@ -131,11 +131,11 @@ export default function LeadGenerator() {
         <main className="max-w-4xl mx-auto p-10">
             <h2 className="text-3xl font-bold mb-6">Lead Generator</h2>
             <div className="mb-6 flex gap-4">
-                <button className={`px-3 py-2 rounded transition-colors ${mode === "single" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
+                <button className={`px-3 py-2 rounded transition-colors cursor-pointer  ${mode === "single" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("single")}>Single Domain</button>
-                <button className={`px-3 py-2 rounded transition-colors ${mode === "paste" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
+                <button className={`px-3 py-2 rounded transition-colors cursor-pointer  ${mode === "paste" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("paste")}>Paste Domains</button>
-                <button className={`px-3 py-2 rounded transition-colors ${mode === "file" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
+                <button className={`px-3 py-2 rounded transition-colors cursor-pointer  ${mode === "file" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("file")}>Upload TXT</button>
             </div>
             {mode === "single" && (
@@ -162,7 +162,7 @@ export default function LeadGenerator() {
                         className="w-full p-2 rounded bg-gray-900 text-green-200 border mb-2"
                     />
                     <div className="flex gap-2 mb-3">
-                        <button className="px-3 py-2 rounded bg-blue-800 hover:bg-blue-900 text-white font-medium transition-colors"
+                        <button className="px-3 py-2 rounded bg-blue-800 hover:bg-blue-900 text-white font-medium transition-colors cursor-pointer "
                             onClick={() => {
                                 if (typeof window !== "undefined") {
                                     const saved = window.localStorage.getItem(DOMAIN_HANDOFF_KEY);
@@ -174,7 +174,7 @@ export default function LeadGenerator() {
                                     }
                                 }
                             }}>Load from Uploader</button>
-                        <button className="px-3 py-2 rounded bg-red-800 hover:bg-red-700 text-white font-medium transition-colors"
+                        <button className="px-3 py-2 rounded bg-red-800 hover:bg-red-700 text-white font-medium transition-colors cursor-pointer "
                             onClick={clearPaste}>Clear</button>
                     </div>
                     {domains.length > 0 && (
@@ -185,7 +185,7 @@ export default function LeadGenerator() {
                     <button
                         disabled={domains.length === 0 || loading}
                         onClick={handlePasteGen}
-                        className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-medium transition-colors disabled:opacity-60">
+                        className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-medium transition-colors disabled:opacity-60 cursor-pointer ">
                         {loading ? "Finding..." : "Find Leads"}
                     </button>
                 </div>
@@ -208,7 +208,7 @@ export default function LeadGenerator() {
                     <button
                         disabled={!file || loading}
                         onClick={handleFileGen}
-                        className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-medium transition-colors disabled:opacity-60 mt-2">
+                        className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-medium transition-colors disabled:opacity-60 mt-2 cursor-pointer ">
                         {loading ? "Finding..." : "Find Leads"}
                     </button>
                 </div>
@@ -218,15 +218,15 @@ export default function LeadGenerator() {
                 <div className="mt-4">
                     <div className="mb-2 flex gap-3">
                         <button onClick={handleDownloadJSON}
-                            className="px-4 py-2 rounded bg-green-800 hover:bg-green-700 text-white transition-colors">
+                            className="px-4 py-2 rounded bg-green-800 hover:bg-green-700 text-white transition-colors cursor-pointer ">
                             Download JSON
                         </button>
                         <button onClick={handleSendToExtractor}
-                            className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white transition-colors">
+                            className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white transition-colors cursor-pointer ">
                             Send to JSON Extractor
                         </button>
                         <button onClick={handleClearResult}
-                            className="px-4 py-2 rounded bg-red-800 hover:bg-red-700 text-white transition-colors">
+                            className="px-4 py-2 rounded bg-red-800 hover:bg-red-700 text-white transition-colors cursor-pointer ">
                             Clear Result
                         </button>
                     </div>

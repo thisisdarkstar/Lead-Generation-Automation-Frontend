@@ -86,13 +86,13 @@ export default function HtmlDomainExtractor({ onExtracted }) {
             <h2 className="text-3xl font-bold mb-6">Extract Domains from HTML</h2>
             <div className="mb-4 flex gap-4">
                 <button
-                    className={`px-3 py-2 rounded ${mode === "upload" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
+                    className={`px-3 py-2 rounded cursor-pointer ${mode === "upload" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("upload")}
                 >
                     Upload HTML
                 </button>
                 <button
-                    className={`px-3 py-2 rounded ${mode === "paste" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
+                    className={`px-3 py-2 rounded cursor-pointer ${mode === "paste" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("paste")}
                 >
                     Paste HTML
@@ -116,15 +116,6 @@ export default function HtmlDomainExtractor({ onExtracted }) {
                             accept=".html,.htm,text/html"
                             onChange={handleUpload}
                             className="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
-                            style={{
-                                position: "absolute",
-                                left: 0,
-                                top: 0,
-                                width: "145px",
-                                height: "100%",
-                                opacity: 0,
-                                cursor: "pointer"
-                            }}
                             tabIndex={0}
                         />
                         {filename && <span className="ml-3 text-gray-400">{filename}</span>}

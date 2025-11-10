@@ -1,6 +1,7 @@
+"use client"
 import parseCSV from "@/utils/csvUtils";
 import { downloadAsTxt } from "@/utils/fileSaver";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const LOCAL_STORAGE_KEY = "domainUploaderDomains";
 const DOMAIN_HANDOFF_KEY = "leadGenHandoffDomains";
@@ -12,6 +13,7 @@ export default function DomainUploader({ onExtracted }) {
     return () => clearTimeout(id);
   }, []);
 
+  const inputRef = useRef();
   const [filename, setFilename] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,7 +57,7 @@ export default function DomainUploader({ onExtracted }) {
   const handleSendToLeadGen = () => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(DOMAIN_HANDOFF_KEY, JSON.stringify(domains));
-      // Optionally, trigger a navigation here (e.g., useRouter or a state callback to show the LeadGen component)
+      // Optionally, trigger a navigation here
     }
   };
 
@@ -92,37 +94,27 @@ export default function DomainUploader({ onExtracted }) {
     <main className="max-w-4xl mx-auto p-10">
       <h2 className="text-3xl font-bold mb-6">Domain CSV Extractor</h2>
       <div className="mb-4 flex flex-wrap gap-3 items-center">
-        <label className="text-base font-medium mb-2 block">
+        <label className="text-base font-medium mb-2 block cursor-pointer">
           <span className="mb-2 inline-block">UPLOAD CSV FILE</span>
           <div className="relative flex items-center">
             <button
               type="button"
               className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white font-medium mr-3 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
               tabIndex={-1}
-              onClick={() => {
-                document.getElementById("domain-upload-input").click();
-              }}
+              onClick={() => inputRef.current && inputRef.current.click()}
             >
               Choose File
             </button>
             <input
+              ref={inputRef}
               id="domain-upload-input"
               type="file"
               accept=".csv,text/csv"
-              className="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
+              className="absolute left-0 top-0 w-36 h-full opacity-0 cursor-pointer"
               onChange={handleUpload}
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: "145px",
-                height: "100%",
-                opacity: 0,
-                cursor: "pointer"
-              }}
               tabIndex={0}
             />
-            {filename && <span className="ml-3 text-gray-400">{filename}</span>}
+            {filename && <span className="ml-3 text-gray-400 text-base">{filename}</span>}
           </div>
         </label>
       </div>
@@ -133,15 +125,11 @@ export default function DomainUploader({ onExtracted }) {
             Extracted Domains <span className="font-normal text-gray-400">({domains.length})</span>
           </h3>
           <div
-            className="
-              border rounded-lg p-4 mb-4
-              bg-gray-900 text-green-200
+            className={`
+              border rounded-lg p-4 mb-4 bg-gray-900 text-green-200
               max-h-80 min-h-72 min-w-[420px]
-              text-base leading-6 font-mono
-              overflow-y-scroll
-              shadow-md
-            "
-            style={{ letterSpacing: "0.01rem" }}
+              text-base leading-6 font-mono overflow-y-scroll shadow-md
+            `}
           >
             {domains.map((d) => (
               <div key={d}>{d}</div>
@@ -150,9 +138,12 @@ export default function DomainUploader({ onExtracted }) {
           <div className="flex flex-wrap items-center gap-4 mt-2">
             <button
               onClick={handleCopy}
-              className={"px-4 py-2 rounded transition-colors " + (copied
-                ? "bg-green-500 text-white"
-                : "bg-blue-900 hover:bg-blue-700 text-blue-100")}
+              className={
+                "px-4 py-2 rounded transition-colors " +
+                (copied
+                  ? "bg-green-500 text-white"
+                  : "bg-blue-900 hover:bg-blue-700 text-blue-100")
+              }
             >
               {copied ? "Copied!" : "Copy All"}
             </button>
@@ -169,7 +160,6 @@ export default function DomainUploader({ onExtracted }) {
             >
               Send for Lead Generation
             </button>
-
             <div className="flex-1" />
             <button
               onClick={handleClear}
@@ -181,7 +171,7 @@ export default function DomainUploader({ onExtracted }) {
         </>
       )}
       {leadResult && (
-        <pre className="bg-gray-900 p-4 mt-6 rounded max-h-72 overflow-y-auto text-xs text-gray-100">
+        <pre className="bg-gray-900 p-4 mt-6 rounded max-h-72 overflow-y-auto text-xs text-gray-100 font-mono">
           {JSON.stringify(leadResult, null, 2)}
         </pre>
       )}
