@@ -16,6 +16,7 @@ export default function LeadGenerator() {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [probe, setProbe] = useState(false);  // <-- NEW
     const fileInputRef = useRef();
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export default function LeadGenerator() {
     const handleSingleGen = async () => {
         setResult(null); setError(""); setLoading(true);
         try {
-            const url = `${API_BASE}?domain=${encodeURIComponent(singleDomain.trim())}`;
+            const url = `${API_BASE}?domain=${encodeURIComponent(singleDomain.trim())}&probe=${probe}`;
             const res = await fetch(url);
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
             setResult(await res.json());
@@ -66,13 +67,13 @@ export default function LeadGenerator() {
             const blob = new Blob([domains.join('\n')], { type: "text/plain" });
             formData.append("file", blob, "domains.txt");
             formData.append("debug", "false");
+            formData.append("probe", String(probe));
             const res = await fetch(API_BASE, {
                 method: "POST", body: formData
             });
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
             const jsonResponse = await res.json();
-            const leads = jsonResponse.leads;
-            setResult(leads);
+            setResult(jsonResponse.leads);
         } catch (e) { setError(e.message || String(e)); }
         setLoading(false);
     };
@@ -86,18 +87,16 @@ export default function LeadGenerator() {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("debug", "false");
+            formData.append("probe", String(probe));
             const res = await fetch(API_BASE, { method: "POST", body: formData });
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
-
             const jsonResponse = await res.json();
-            const leads = jsonResponse.leads;
-            setResult(leads);
+            setResult(jsonResponse.leads);
         } catch (e) {
             setError(e.message || String(e));
         }
         setLoading(false);
     };
-
 
     const handleFileSelect = (e) => {
         if (e.target.files[0]) {
@@ -120,7 +119,6 @@ export default function LeadGenerator() {
 
     const handleClearResult = () => setResult(null);
 
-    // --- Add this handler ---
     const handleSendToExtractor = () => {
         if (!result) return;
         window.localStorage.setItem(LEADGEN_RESULT_KEY, JSON.stringify(result));
@@ -138,6 +136,22 @@ export default function LeadGenerator() {
                 <button className={`px-3 py-2 rounded transition-colors cursor-pointer  ${mode === "file" ? "bg-blue-800 text-white" : "bg-gray-700 text-gray-100"}`}
                     onClick={() => setMode("file")}>Upload TXT</button>
             </div>
+
+            {/* Probe Toggle */}
+            <div className="mb-4 flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    id="leadgen-probe"
+                    checked={probe}
+                    onChange={e => setProbe(e.target.checked)}
+                    className="w-4 h-4 accent-blue-700"
+                    disabled={loading}
+                />
+                <label htmlFor="leadgen-probe" className="text-blue-100 font-medium cursor-pointer">
+                    Probe live/active domains only (slower)
+                </label>
+            </div>
+
             {mode === "single" && (
                 <div className="mb-6">
                     <label className="block text-base font-medium mb-2">Domain Name</label>
@@ -152,6 +166,7 @@ export default function LeadGenerator() {
                         {loading ? "Finding..." : "Find Leads"}
                     </button>
                 </div>)}
+
             {mode === "paste" && (
                 <div className="mb-6">
                     <label className="block text-base font-medium mb-2">
@@ -190,6 +205,7 @@ export default function LeadGenerator() {
                     </button>
                 </div>
             )}
+
             {mode === "file" && (
                 <div className="mb-6">
                     <label className="block text-base font-medium mb-2">Upload domains.txt</label>
@@ -213,6 +229,7 @@ export default function LeadGenerator() {
                     </button>
                 </div>
             )}
+
             {error && <div className="text-red-400 mb-4">{error}</div>}
             {result && (
                 <div className="mt-4">
