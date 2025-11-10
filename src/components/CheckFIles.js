@@ -58,18 +58,18 @@ export default function CheckFiles() {
                         <span>File Management</span>
                         <button
                             onClick={() => { setShow(false); setFiles([]); setResult(null); setError(""); }}
-                            className="ml-2 py-1 px-3 bg-gray-700 hover:bg-gray-800 font-bold rounded-lg text-sm transition-all"
+                            className="ml-2 py-1 px-3 bg-gray-700 hover:bg-gray-800 font-bold rounded-lg text-sm transition-all cursor-pointer"
                         >Close</button>
                     </div>
                     <div className="px-6 pb-4 flex flex-wrap gap-3">
                         <button
                             onClick={fetchFiles}
-                            className="bg-blue-700 hover:bg-blue-800 rounded-lg py-2 px-4 text-white font-bold transition-all"
+                            className="bg-blue-700 hover:bg-blue-800 rounded-lg py-2 px-4 text-white font-bold transition-all cursor-pointer"
                             disabled={loading}
                         >Get File List</button>
                         <button
                             onClick={clearFiles}
-                            className="bg-rose-600 hover:bg-rose-700 rounded-lg py-2 px-4 text-white font-bold transition-all"
+                            className="bg-rose-600 hover:bg-rose-700 rounded-lg py-2 px-4 text-white font-bold transition-all cursor-pointer"
                             disabled={loading}
                         >Clear Files</button>
                     </div>
