@@ -11,7 +11,7 @@ const TABS = [
   { id: "csv", label: "CSV to Domains" },
   { id: "leads", label: "Extract From JSON" },
   { id: "html", label: "Extract From HTML" },
-  { id: "lead_gen", label: "Lead Generation (slow)" },
+  { id: "lead_gen", label: "Lead Generation" },
   { id: "fetch_alloc", label: "Fetch Allocations" }
 ];
 

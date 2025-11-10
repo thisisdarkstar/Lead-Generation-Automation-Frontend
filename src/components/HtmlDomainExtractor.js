@@ -142,10 +142,10 @@ export default function HtmlDomainExtractor({ onExtracted }) {
             )}
             {error && <div className="text-red-400 mb-2">{error}</div>}
             {domains.length > 0 && (
-                <>
-                    <h1 className="text-xl font-semibold mt-6 mb-2">
-                        Extracted Domains <span className="text-gray-400 font-normal">({domains.length})</span>
-                    </h1>
+                <div>
+                    <h3 className="text-xl font-semibold mt-6 mb-2">
+                        Extracted Domains ({domains.length})
+                    </h3>
                     <div
                         className="
                             border rounded-lg p-4 mb-4 
@@ -184,7 +184,7 @@ export default function HtmlDomainExtractor({ onExtracted }) {
                             Clear All
                         </button>
                     </div>
-                </>
+                </div>
             )}
         </main>
     );
