@@ -1,5 +1,6 @@
 import { downloadAsJson } from "@/utils/fileSaver";
 import React, { useRef, useState, useEffect } from "react";
+import { useToast } from "./Toast";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_BASE = `${baseUrl}/api/find-leads`;
@@ -7,6 +8,7 @@ const DOMAIN_HANDOFF_KEY = "leadGenHandoffDomains";
 const LEADGEN_RESULT_KEY = "leadGeneratorResults";
 
 export default function LeadGenerator() {
+    const toast = useToast();
     const [mode, setMode] = useState("single");
     const [singleDomain, setSingleDomain] = useState("");
     const [fileName, setFileName] = useState("");
@@ -46,6 +48,7 @@ export default function LeadGenerator() {
         setDomains([]);
         if (typeof window !== "undefined")
             window.localStorage.removeItem(DOMAIN_HANDOFF_KEY);
+        toast.info("Cleared pasted domains");
     };
 
     const handleSingleGen = async () => {
@@ -55,7 +58,11 @@ export default function LeadGenerator() {
             const res = await fetch(url);
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
             setResult(await res.json());
-        } catch (e) { setError(e.message || String(e)); }
+            toast.success(`Leads found for ${singleDomain}`);
+        } catch (e) {
+            setError(e.message || String(e));
+            toast.error(e.message || "Error finding leads");
+        }
         setLoading(false);
     };
 
@@ -74,7 +81,11 @@ export default function LeadGenerator() {
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
             const jsonResponse = await res.json();
             setResult(jsonResponse.leads);
-        } catch (e) { setError(e.message || String(e)); }
+            toast.success(`Found leads for ${jsonResponse.leads.length} domains`);
+        } catch (e) {
+            setError(e.message || String(e));
+            toast.error(e.message || "Error finding leads");
+        }
         setLoading(false);
     };
 
@@ -92,8 +103,10 @@ export default function LeadGenerator() {
             if (!res.ok) throw new Error((await res.json()).detail || `Status: ${res.status}`);
             const jsonResponse = await res.json();
             setResult(jsonResponse.leads);
+            toast.success("Successfully processed file");
         } catch (e) {
             setError(e.message || String(e));
+            toast.error(e.message || "Error processing file");
         }
         setLoading(false);
     };
@@ -104,6 +117,7 @@ export default function LeadGenerator() {
             setFile(e.target.files[0]);
             e.target.files[0].text().then(text => {
                 setDomains(text.split('\n').map(x => x.trim()).filter(Boolean));
+                toast.success("File loaded successfully");
             });
         } else {
             setFileName("");
@@ -115,14 +129,18 @@ export default function LeadGenerator() {
     const handleDownloadJSON = () => {
         if (!result) return;
         downloadAsJson(result, "leads_results.json");
+        toast.success("Downloading JSON results...");
     };
 
-    const handleClearResult = () => setResult(null);
+    const handleClearResult = () => {
+        setResult(null);
+        toast.info("Results cleared");
+    };
 
     const handleSendToExtractor = () => {
         if (!result) return;
         window.localStorage.setItem(LEADGEN_RESULT_KEY, JSON.stringify(result));
-        alert("Lead generation results saved! Switch to 'Extract From JSON' and click 'Load from Lead Generator'.");
+        toast.success("Results sent to JSON Extractor! Switch tabs to view.");
     };
 
     return (

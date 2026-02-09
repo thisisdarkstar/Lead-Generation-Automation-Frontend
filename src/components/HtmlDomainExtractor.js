@@ -1,10 +1,12 @@
 import { downloadAsTxt } from "@/utils/fileSaver";
 import extractDomainsFromHtml from "@/utils/htmlUtils";
 import React, { useEffect, useRef, useState } from "react";
+import { useToast } from "./Toast";
 
 const LOCAL_STORAGE_KEY = "htmlExtractorDomainsStructured";
 
 export default function HtmlDomainExtractor({ onExtracted }) {
+    const toast = useToast();
     const [html, setHtml] = useState("");
     const [domains, setDomains] = useState(() => {
         if (typeof window === "undefined") return [];
@@ -50,7 +52,18 @@ export default function HtmlDomainExtractor({ onExtracted }) {
         setFilename(e.target.files[0].name);
         const text = await e.target.files[0].text();
         setHtml(text);
-        processHtml(text);
+
+        try {
+            const found = extractDomainsFromHtml(text);
+            setDomains(found);
+            if (onExtracted) onExtracted(found);
+            setError("");
+            toast.success(`Extracted ${found.length} domains from HTML`);
+        } catch (err) {
+            setError("Failed to parse or extract domains.");
+            setDomains([]);
+            toast.error("Failed to parse HTML file");
+        }
     };
 
     const handlePaste = (e) => {
@@ -64,11 +77,13 @@ export default function HtmlDomainExtractor({ onExtracted }) {
     const handleDownload = () => {
         if (!domains.length) return;
         downloadAsTxt(domains.join('\n'), "domains.txt");
+        toast.success("Downloading domains.txt...");
     };
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(domains.join("\n"));
         setCopied(true);
+        toast.success("Domains copied to clipboard");
         setTimeout(() => setCopied(false), 2000);
     };
 
@@ -79,6 +94,7 @@ export default function HtmlDomainExtractor({ onExtracted }) {
         setCopied(false);
         setFilename("");
         if (typeof window !== "undefined") window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+        toast.info("All data cleared");
     };
 
     return (

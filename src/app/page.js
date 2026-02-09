@@ -7,6 +7,9 @@ import LeadGenerator from "@/components/LeadGeneration";
 import FetchAllocations from "@/components/FetchAllocations";
 import HealthCheck from "@/components/HealthCheck";
 import CheckFiles from "@/components/CheckFIles"; // Import your floating component
+import BannerAd from "@/components/BannerAd"; // Banner Ad component
+import NativeBannerAd from "@/components/NativeBannerAd"; // Native Banner Ad component
+import { ToastProvider } from "@/components/Toast"; // Toast Provider
 
 const TABS = [
   { id: "csv", label: "CSV to Domains" },
@@ -22,8 +25,13 @@ export default function Home() {
   const [showHealth, setShowHealth] = useState(false);
 
   return (
-    <>
+    <ToastProvider>
       <main className="mx-auto p-6">
+        {/* Top Banner Ad */}
+        <div className="mb-6 flex justify-center">
+          <BannerAd />
+        </div>
+
         <nav className="mb-4 flex gap-4 items-center justify-center">
           {TABS.map(t => (
             <button
@@ -57,6 +65,11 @@ export default function Home() {
             <FetchAllocations />
           </div>
         </section>
+
+        {/* Bottom Native Banner Ad */}
+        <div className="mt-6 flex justify-center">
+          <NativeBannerAd />
+        </div>
       </main>
 
       {/* Floating HealthCheck button */}
@@ -90,6 +103,6 @@ export default function Home() {
 
       {/* Floating CheckFiles utility */}
       <CheckFiles />
-    </>
+    </ToastProvider>
   );
 }

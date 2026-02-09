@@ -1,5 +1,6 @@
 import extractFromLeads from "@/utils/jsonUtils";
 import React, { useEffect, useState, useRef } from "react";
+import { useToast } from "./Toast";
 
 const LOCAL_STORAGE_KEY = "leadsExtractorResults";
 const JSON_FILE_KEY = "leadsExtractorJsonFile";
@@ -8,6 +9,7 @@ const PASTEBOX_KEY = "leadsJsonExtractorPasteBox";
 const LEADGEN_RESULT_KEY = "leadGeneratorResults";
 
 export default function LeadsJsonExtractor() {
+    const toast = useToast();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -89,6 +91,7 @@ export default function LeadsJsonExtractor() {
         setFilenameJSON(e.target.files[0]?.name || "");
         const fileText = await e.target.files[0].text();
         setLeads(JSON.parse(fileText));
+        toast.success("JSON file loaded");
     };
 
     const handleClearJSON = () => {
@@ -98,12 +101,14 @@ export default function LeadsJsonExtractor() {
             window.localStorage.removeItem(JSON_FILE_KEY);
             window.localStorage.removeItem(JSON_FILE_KEY + "_name");
         }
+        toast.info("JSON cleared");
     };
 
     const handleDomains = async (e) => {
         setFilenameTXT(e.target.files[0]?.name || "");
         const fileText = await e.target.files[0].text();
         setDomains(fileText.split('\n').map(x => x.trim()).filter(Boolean));
+        toast.success("TXT file loaded");
     };
 
     const handleClearTXT = () => {
@@ -118,13 +123,22 @@ export default function LeadsJsonExtractor() {
     const handlePasteBoxClear = () => {
         setPasteText("");
         if (typeof window !== "undefined") window.localStorage.removeItem(PASTEBOX_KEY);
+        toast.info("Paste box cleared");
     };
 
     const handleExtract = () => {
         const useDomains = pasteText.trim() ? pasteText.split('\n').map(x => x.trim()).filter(Boolean) : domains;
-        if (!leads || !useDomains.length) return;
+        if (!leads) {
+            toast.error("Please upload a JSON file first");
+            return;
+        }
+        if (!useDomains.length) {
+            toast.error("Please provide domains via TXT or paste");
+            return;
+        }
         setResult(extractFromLeads(leads, useDomains));
         setCopied(false);
+        toast.success("Extraction complete!");
     };
 
     const handleClearAll = () => {
@@ -144,6 +158,7 @@ export default function LeadsJsonExtractor() {
             window.localStorage.removeItem(TXT_FILE_KEY + "_name");
             window.localStorage.removeItem(PASTEBOX_KEY);
         }
+        toast.info("All data cleared");
     };
 
     // --- Load from LeadGenerator handler ---
@@ -154,11 +169,13 @@ export default function LeadsJsonExtractor() {
                 try {
                     setLeads(JSON.parse(saved));
                     setFilenameJSON("Loaded from Lead Generator");
+                    toast.success("Loaded from Lead Generator");
                 } catch {
                     alert("Couldn't load or parse results from Lead Generator!");
+                    toast.error("Failed to load generic data");
                 }
             } else {
-                alert("No results in localStorage yet.");
+                toast.warning("No results found in Lead Generator");
             }
         }
     };

@@ -2,11 +2,13 @@
 import parseCSV from "@/utils/csvUtils";
 import { downloadAsTxt } from "@/utils/fileSaver";
 import React, { useEffect, useState, useRef } from "react";
+import { useToast } from "./Toast";
 
 const LOCAL_STORAGE_KEY = "domainUploaderDomains";
 const DOMAIN_HANDOFF_KEY = "leadGenHandoffDomains";
 
 export default function DomainUploader({ onExtracted }) {
+  const toast = useToast();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 0);
@@ -49,26 +51,30 @@ export default function DomainUploader({ onExtracted }) {
       const found = parseCSV(text);
       setDomains(found);
       if (onExtracted) onExtracted(found);
+      toast.success(`Extracted ${found.length} domains from CSV`);
     } catch {
       setError("Invalid or unsupported CSV file.");
+      toast.error("Invalid or unsupported CSV file");
     }
   };
 
   const handleSendToLeadGen = () => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(DOMAIN_HANDOFF_KEY, JSON.stringify(domains));
-      // Optionally, trigger a navigation here
+      toast.success("Domains sent to Lead Generator! Switch tabs to view.");
     }
   };
 
   const handleDownload = () => {
     if (!domains.length) return;
     downloadAsTxt(domains.join('\n'), "domains.txt");
+    toast.success("Downloading domains.txt...");
   };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(domains.join("\n"));
     setCopied(true);
+    toast.success("Domains copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -79,6 +85,7 @@ export default function DomainUploader({ onExtracted }) {
     setCopied(false);
     setFilename("");
     window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+    toast.info("All data cleared");
   };
 
   if (!mounted) {

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useToast } from "./Toast";
 
 const DOMAIN_HANDOFF_KEY = "leadGenHandoffDomains";
 const LOCAL_STORAGE_KEY = "fetchedDomains";
 const SIZE_OPTIONS = [10, 50, 100, 150, 200];
 
 export default function FetchAllocations() {
+    const toast = useToast();
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         const id = setTimeout(() => setMounted(true), 0);
@@ -51,12 +53,14 @@ export default function FetchAllocations() {
             const data = await res.json();
             if (data.success && Array.isArray(data.domains)) {
                 setDomains(data.domains);
+                toast.success(`Fetched ${data.domains.length} domains`);
             } else {
                 throw new Error(data.message || "Error fetching data");
             }
         } catch (err) {
             setDomains([]);
             setError(err.message || "Error fetching data");
+            toast.error(err.message || "Failed to fetch domains");
         } finally {
             setLoading(false);
         }
@@ -65,13 +69,14 @@ export default function FetchAllocations() {
     const handleLeadGen = () => {
         if (domains.length) {
             window.localStorage.setItem(DOMAIN_HANDOFF_KEY, JSON.stringify(domains));
-            alert("Domains sent for lead generation!");
+            toast.success("Domains sent to Lead Generator! Switch tabs to view.");
         }
     };
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(domains.join("\n"));
         setCopied(true);
+        toast.success("Domains copied to clipboard");
         setTimeout(() => setCopied(false), 2000);
     };
 
@@ -80,6 +85,7 @@ export default function FetchAllocations() {
         setError("");
         setCopied(false);
         window.localStorage.removeItem(LOCAL_STORAGE_KEY);
+        toast.info("All data cleared");
     };
 
     if (!mounted) {
